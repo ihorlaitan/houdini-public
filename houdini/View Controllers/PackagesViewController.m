@@ -12,6 +12,8 @@
 #include "package.h"
 #include "utilities.h"
 #include "packages_control.h"
+#include <spawn.h>
+#include <sys/sysctl.h>
 
 @implementation PackageCell
 
@@ -82,7 +84,7 @@ bool is_filtered = false;
         [searchTextField setAttributedPlaceholder:[[NSAttributedString alloc] initWithString:@"Search Packages" attributes:@{NSForegroundColorAttributeName: [UIColor whiteColor]}]];
     }
     
- 
+    
     if(tweaks_list == NULL) {
         tweaks_list = [[NSMutableArray alloc] init];
     }
@@ -93,17 +95,17 @@ bool is_filtered = false;
     
     filtered_list = [[NSMutableArray alloc] init];
     
-//    // TESTING ----
-//    char* bundle_root = get_houdini_app_path();
-//    
-//    char* dylib_path = NULL;
-//    asprintf(&dylib_path, "%s/jdylibs/LocationSpoofing", bundle_root);
-//    
-//    // Default packages
-////    Package *dylib_test = [[Package alloc] initWithName:@"Test Tweak" type:@"tweaks" short_desc:@"Injects an Alert View Controller into an app" url:[NSString stringWithFormat:@"%s", dylib_path]];
-////
-////    [tweaks_list addObject:dylib_test];
-//    // ----------
+    //    // TESTING ----
+    //    char* bundle_root = get_houdini_app_path();
+    //
+    //    char* dylib_path = NULL;
+    //    asprintf(&dylib_path, "%s/jdylibs/LocationSpoofing", bundle_root);
+    //
+    //    // Default packages
+    ////    Package *dylib_test = [[Package alloc] initWithName:@"Test Tweak" type:@"tweaks" short_desc:@"Injects an Alert View Controller into an app" url:[NSString stringWithFormat:@"%s", dylib_path]];
+    ////
+    ////    [tweaks_list addObject:dylib_test];
+    //    // ----------
     
     utilities_list = [[NSMutableArray alloc] init];
     
@@ -111,7 +113,7 @@ bool is_filtered = false;
     Package *icons_renamer = [[Package alloc] initWithName:@"Icons Label Hide/Renamer" type:@"utilities" short_desc:@"Rename or hide your homescreen icons' labels" url:nil];
     Package *icons_shortcut_renamer = [[Package alloc] initWithName:@"Icons 3D Touch Hide/Renamer" type:@"utilities" short_desc:@"Rename or hide your homescreen 3D touch labels" url:nil];
     Package *colorize_badges = [[Package alloc] initWithName:@"Icon Badges" type:@"utilities" short_desc:@"Colorize and resize icon badges!" url:nil];
-
+    
     [colorize_badges setThumbnail_image:[UIImage imageNamed:@"Badge"]];
     [display setThumbnail_image:[UIImage imageNamed:@"Resize"]];
     
@@ -125,7 +127,7 @@ bool is_filtered = false;
         
         Package *siri_suggestions = [[Package alloc] initWithName:@"Siri Suggestions" type:@"utilities" short_desc:@"(10.2.x only) Add and edit siri suggestions" url:nil];
         Package *passcode_buttons = [[Package alloc] initWithName:@"Passcode Buttons Customizer" type:@"utilities" short_desc:@"Make authentication great again!" url:nil];
-
+        
         [utilities_list addObject:siri_suggestions];
         [utilities_list addObject:passcode_buttons];
     }
@@ -154,11 +156,19 @@ bool is_filtered = false;
     }
     
     // iPhone X packages - only
-    Package *iamanimoji = [[Package alloc] initWithName:@"IamAnimoji" type:@"utilities" short_desc:@"Add your face to Animoji! (iPhone X only)" url:nil];
-    
-    [iamanimoji setThumbnail_image:[UIImage imageNamed:@"Animoji"]];
-    
-    [utilities_list addObject:iamanimoji];
+    size_t size;
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    char *modelChar = malloc(size);
+    sysctlbyname("hw.machine", modelChar, &size, NULL, 0);
+    NSString *deviceModel = [NSString stringWithUTF8String:modelChar];
+    free(modelChar);
+    if ([deviceModel isEqualToString:@"iPhone10,3"] | [deviceModel isEqualToString:@"iPhone10,6"]) {
+        Package *iamanimoji = [[Package alloc] initWithName:@"IamAnimoji" type:@"utilities" short_desc:@"Add your face to Animoji! (iPhone X only)" url:nil];
+        
+        [iamanimoji setThumbnail_image:[UIImage imageNamed:@"Animoji"]];
+        
+        [utilities_list addObject:iamanimoji];
+    }
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -209,7 +219,7 @@ bool is_filtered = false;
             
         }
     }
-
+    
     [cell.packageTitle setText:[package get_name]];
     
     if(package.source != nil)
@@ -347,3 +357,4 @@ bool is_filtered = false;
 
 
 @end
+
