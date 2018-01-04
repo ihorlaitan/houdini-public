@@ -1,6 +1,6 @@
 # Houdini (iOS 10-10.3.2 and iOS 11-11.1.2)
 
-by Abraham Masri @cheesecakeufo - exploits by (@i4nbeer
+by Abraham Masri @cheesecakeufo - exploits by (@i4nbeer)
 
 [Download here](https://iabem97.github.io/houdini_website/)
 
@@ -14,7 +14,7 @@ Open the project "blue icon" and hit run.)
 # Is this a full jailbreak?
 Nope. Once you run it, Cydia will NOT be installed.
 
-This is not meant to be a full jailbreak. I created it because as a PoC (to learn about the iOS file system structure and how far we can modify the system with a full jailbreak).
+This is not meant to be a full jailbreak. I initially created it as a PoC (to learn about the iOS file system structure and how far we can modify the system without a full jailbreak) but then it turned into a project for everyone to use.
 
 # How can I help?
 If you're interested in taking Houdini to the next level and add more features, go for it.
